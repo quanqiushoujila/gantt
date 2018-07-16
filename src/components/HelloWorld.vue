@@ -2,21 +2,30 @@
   <div id="gantt">
     <div class="gantt-wrapper">
       <div class="gantt-left">
-        <table style="width: 100%;">
-          <thead>
-            <tr>
-              <td></td>
-            </tr>
-            <tr>
-              <td v-for="item in gantt.titles" :key="item.titel">{{item.title}}</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table style="width: 100%;" class="">
+            <colgroup  v-for="item in gantt.titles" :key="item.width">
+              <col :width="item.width"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th :colspan="gantt.titles.length">
+                  111111
+                </th>
+              </tr>
+              <tr>
+                <th v-for="item in gantt.titles" :key="item.titel">{{item.title}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in gantt.data" :key="item.no">
+                <td :title="item.no + '.' + item.name">{{item.no + '.' + item.name}}</td>
+                <td :title="item.startDate">{{item.startDate}}</td>
+                <td :title="item.progress">{{item.progress}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="gantt-right">
 
@@ -33,13 +42,16 @@ export default {
       gantt: {
         titles: [
           {
-            title: '任务名称'
+            title: '任务名称',
+            width: '200px'
           },
           {
-            title: '计划开始时间'
+            title: '计划开始时间',
+            width: '100px'
           },
           {
-            title: '进度'
+            title: '进度',
+            width: '50px'
           }
         ],
         data: [
@@ -143,6 +155,11 @@ export default {
         ]
       }
     }
+  },
+  methods: {
+    word (name) {
+
+    }
   }
 }
 </script>
@@ -171,6 +188,14 @@ export default {
   .ganttOrange {
     background-color: #fdb143;
   }
+}
+.table-responsive>table>tbody>tr>td,
+.table-responsive>table>tbody>tr>th,
+.table-responsive>table>tfoot>tr>td,
+.table-responsive>table>tfoot>tr>th,
+.table-responsive>table>thead>tr>td,
+.table-responsive>table>thead>tr>th {
+  white-space: nowrap;
 }
 table {
 }
