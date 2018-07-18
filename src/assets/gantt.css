@@ -1,0 +1,203 @@
+#gantt {
+  font-size: 12px;
+  padding: 10px;
+}
+
+#gantt .gantt-wrapper {
+  border: 1px solid #d7d7d7;
+}
+
+#gantt .gantt-wrapper .gantt-left,
+#gantt .gantt-wrapper .gantt-right {
+  min-height: 100px;
+  width: 50%;
+  float: left;
+  box-sizing: border-box;
+  position: relative;
+}
+
+#gantt .gantt-wrapper .gantt-left table tr:first-child th {
+  height: 100px;
+}
+
+#gantt .gantt-wrapper .gantt-right .picker {
+  padding: 5px 0 0 5px;
+  height: 43px;
+  border-bottom: 1px solid #d7d7d7;
+}
+
+#gantt .ganttBlue {
+  background-color: #4b9ccb;
+}
+
+#gantt .ganttOrange {
+  background-color: #fdb143;
+}
+
+#gantt .table-responsive {
+  overflow: auto;
+  position: relative;
+}
+
+#gantt .table-responsive td.name {
+  padding-left: 20px;
+}
+
+#gantt .table-responsive td.name span {
+  position: relative;
+}
+
+#gantt .table-responsive .row {
+  display: inline-block;
+  width: 26px;
+  height: 21px;
+  line-height: 25px;
+  overflow: hidden;
+}
+
+#gantt .table-responsive .progresses {
+  position: absolute;
+  top: 78px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#gantt .table-responsive .progresses .progress-item {
+  height: 21px;
+  position: relative;
+}
+
+#gantt .table-responsive .progresses .pregress {
+  height: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+#gantt .table-responsive .progresses .pregress.ganttOrange {
+  background-color: #fdb143;
+}
+
+#gantt .table-responsive .progresses .pregress.ganttBlue {
+  background-color: #3aa1dd;
+}
+
+#gantt .content th {
+  font-weight: 700;
+}
+
+#gantt .toggle {
+  display: inline-block;
+  font-style: normal;
+  cursor: pointer;
+  height: 21px;
+  width: 15px;
+  position: absolute;
+  left: -15px;
+  top: 0px;
+}
+
+#gantt .black {
+  width: 15px;
+  height: 21px;
+  display: inline-block;
+}
+.table-responsive>table>tbody>tr>td,
+.table-responsive>table>tbody>tr>th,
+.table-responsive>table>tfoot>tr>td,
+.table-responsive>table>tfoot>tr>th,
+.table-responsive>table>thead>tr>td,
+.table-responsive>table>thead>tr>th {
+  white-space: nowrap;
+}
+.mx-datepicker-range {
+  width: 220px;
+}
+td, th {
+  height: 25px;
+  padding: 0 3px;
+}
+th {
+  font-weight: 500;
+}
+th, td {
+  padding: 0;
+}
+table, tr, td, th {
+  border-collapse:collapse;
+  border: 1px solid #d7d7d7;
+}
+.center {
+  text-align: center;
+}
+.clearfix:after {
+  content:"";
+  display: block;
+  clear:both;
+}
+.state {
+  display: block;
+  float: left;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ccc;
+  margin: 2px 8px 0 3px;
+}
+.s-blue {
+  background-color: #3aa1dd;
+}
+.s-green {
+  background-color: #56ad4a;
+}
+.s-white {
+  width: 14px;
+  height: 14px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+}
+.s-yellow{
+  background-color: #ffd800;
+}
+.s-red{
+  background-color: #da3628;
+}
+.has-download {
+  cursor: pointer;
+}
+.pull-left {
+  float: left;
+}
+.select-date {
+  margin-left: 10px;
+}
+.select-date a{
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-block;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 15px;
+  margin-left: -1px;
+  border: 1px solid #e4e4e4;
+  color: #999;
+}
+.select-date a.current {
+  background: #069ddb;
+  color: #fff;
+}
+.select-date a:first-child {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.select-date a:last-child {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.row-weeks {
+  width: 107px;
+  text-align: center;
+}
+.row-month {
+  width: 107px;
+}

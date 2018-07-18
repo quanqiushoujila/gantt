@@ -1,0 +1,128 @@
+#gantt {
+  font-size: 12px;
+  padding: 10px;
+  .gantt-wrapper {
+    border: 1px solid #d7d7d7;
+    .gantt-left, .gantt-right {
+      min-height: 100px;
+      width: 50%;
+      float: left;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .gantt-left {
+      table {
+        tr:first-child {
+          th {
+            height: 100px;
+          }
+        }
+      }
+    }
+    .gantt-right {
+      .picker {
+        padding: 5px 0 0 5px;
+        height: 43px;
+        border-bottom: 1px solid #d7d7d7;
+      }
+    }
+  }
+  .ganttBlue {
+    background-color: #4b9ccb;
+  }
+  .ganttOrange {
+    background-color: #fdb143;
+  }
+  .table-responsive {
+    overflow: auto;
+    position: relative;
+    td.name {
+      span {
+        position: relative;
+      }
+      padding-left: 20px;
+    }
+    .row {
+      display: inline-block;
+      width: 26px;
+      height: 21px;
+      line-height: 25px;
+      overflow: hidden;
+    }
+    .progresses {
+      position: absolute;
+      top: 78px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      .progress-item {
+        height: 21px;
+        position: relative;
+      }
+      .pregress {
+        height: 5px;
+        border-radius: 5px;
+        margin-top: 5px;
+        &.ganttOrange {
+          background-color: #fdb143;
+        }
+        &.ganttBlue {
+          background-color: #3aa1dd;
+        }
+      }
+    }
+  }
+  .content {
+    th {
+      font-weight: 700;
+    }
+  }
+  .toggle {
+    display: inline-block;
+    font-style: normal;
+    cursor: pointer;
+    height: 21px;
+    width: 15px;
+    position: absolute;
+    left: -15px;
+    top: 0px;
+  }
+  .black {
+    width: 15px;
+    height: 21px;
+    display: inline-block;
+  }
+}
+.table-responsive>table>tbody>tr>td,
+.table-responsive>table>tbody>tr>th,
+.table-responsive>table>tfoot>tr>td,
+.table-responsive>table>tfoot>tr>th,
+.table-responsive>table>thead>tr>td,
+.table-responsive>table>thead>tr>th {
+  white-space: nowrap;
+}
+.mx-datepicker-range {
+  width: 220px;
+}
+td, th {
+  height: 25px;
+  padding: 0 3px;
+}
+th {
+  font-weight: 500;
+}
+th, td {
+  padding: 0;
+}
+table, tr, td, th {
+  border-collapse:collapse;
+  border: 1px solid #d7d7d7;
+}
+.center {
+  text-align: center;
+}
+.clearfix:after {
+  content:"";
+  display: block;
+  clear:both;
+}
