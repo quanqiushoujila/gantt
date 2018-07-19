@@ -92,7 +92,7 @@
                   </th>
                 </tr>
                 <tr>
-                  <th v-for="(item, index) in (rangeDate.months.length * 4)" :key="index" :colspan="1">
+                  <th v-for="(item, index) in monthsColspanAllCount" :key="index" :colspan="1">
                     <div class="row">{{rangeDate.weeks[index]}}</div>
                   </th>
                 </tr>
