@@ -201,3 +201,14 @@ table, tr, td, th {
 .row-month {
   width: 107px;
 }
+.col1, .col2 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.col1 {
+  width: 27px;
+}
+.col2 {
+  width: 54px;
+}

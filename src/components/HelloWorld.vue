@@ -67,7 +67,7 @@
               <thead v-if="currentDateType === 'days'">
                 <tr>
                   <th class="fullYear" v-for="(item, index) in rangeDate.months" :key="index" :colspan="colspan(item)">
-                    {{item|month}}
+                    {{monthFilter(item, colspan(item))}}
                   </th>
                 </tr>
                 <tr>
@@ -87,20 +87,20 @@
               </thead>
               <thead v-else-if="currentDateType === 'weeks'">
                 <tr>
-                  <th v-for="(item, index) in rangeDate.months" :key="index" :colspan="4">
-                    <div class="row-weeks">{{item|month}}</div>
+                  <th v-for="(item, index) in rangeDate.months" :key="index" :colspan="colspan(item)">
+                    <div :class="{'row-weeks': colspan(item) > 3}">{{monthFilter(item, colspan(item))}}</div>
                   </th>
                 </tr>
                 <tr>
                   <th v-for="(item, index) in (rangeDate.months.length * 4)" :key="index" :colspan="1">
-                    <div class="row">{{index + 1}}</div>
+                    <div class="row">{{rangeDate.weeks[index]}}</div>
                   </th>
                 </tr>
               </thead>
               <thead v-else-if="currentDateType === 'months'">
                 <tr>
-                  <th v-for="(item, index) in rangeDate.months" :key="index" :colspan="4">
-                    <div class="row-month">{{item|month}}</div>
+                  <th v-for="(item, index) in rangeDate.months" :key="index" :colspan="colspan(item)">
+                    <div :class="{'row-month': colspan(item) > 2}">{{monthFilter(item, colspan(item))}}</div>
                   </th>
                 </tr>
               </thead>
@@ -113,7 +113,7 @@
               </tbody>
               <tbody v-else-if="currentDateType === 'months' || currentDateType === 'weeks'">
                 <tr v-for="(item, index) in gantt.data" :key="index" v-show="toggleArr.indexOf(index) === -1">
-                  <td v-for="(item, index) in (rangeDate.months.length * 4)" :key="index"></td>
+                  <td v-for="item in monthsColspanAllCount" :key="item"></td>
                 </tr>
               </tbody>
             </template>
@@ -137,7 +137,8 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      currentDateType: 'days',
+      monthsColspanAllCount: 0,
+      currentDateType: 'months',
       data1: [
         {
           no: '1',
@@ -562,7 +563,8 @@ export default {
       },
       rangeDate: {
         dates: [],
-        months: []
+        months: [],
+        weeks: []
       },
       daysBefore: 0,
       daysAfter: 0,
@@ -612,13 +614,6 @@ export default {
       var startIndex = val.lastIndexOf('-')
       var endIndex = val.indexOf(':')
       return val.slice(startIndex + 1, endIndex)
-    },
-    month (val) {
-      var startIndex = val.indexOf('-')
-      var year = val.slice(0, startIndex)
-      var monthIndex = val.slice(startIndex + 1).match(/\d+/)[0]
-      // return month[monthIndex - 1]
-      return year + '年' + month[monthIndex - 1]
     }
   },
   watch: {
@@ -672,6 +667,7 @@ export default {
 
           this.rangeDate.dates.length = 0
           this.rangeDate.months.length = 0
+          this.rangeDate.weeks.length = 0
           do {
             var d = new Date(+min)
             var m = d.getFullYear() + '-' + (d.getMonth() + 1)
@@ -682,20 +678,47 @@ export default {
             } else {
               this.rangeDate.months.push(m)
             }
+            var w = Math.floor((d.getTime() - this.startTime.getTime()) / (DAY * 7)) + 1
+            if (this.rangeDate.weeks.length === 0) {
+              this.rangeDate.weeks.push(w)
+            } else {
+              if (this.rangeDate.weeks.indexOf(w) === -1) {
+                this.rangeDate.weeks.push(w)
+              }
+            }
             this.rangeDate.dates.push(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ':' + d.getDay())
             min += DAY
           } while (min <= max)
-          this.initFullYear()
+          // this.initFullYear()
           var self = this
           setTimeout(function () {
             self.getTableWidth()
-          }, 6)
+          }, 5)
+          this.monthsColspanAllCount = this.getMonthsColspanAll()
+          console.log(this.rangeDate)
         }
       },
       immediate: true
     }
   },
   methods: {
+    getMonthsColspanAll () {
+      var start = this.rangeDate.start
+      var end = this.rangeDate.end
+      var len = this.rangeDate.months.length * 4 - this.getMonthsColspan(start.getDate(), 'after') - this.getMonthsColspan(end.getDate(), 'before') + 2
+      console.log('len', len)
+      return len
+    },
+    monthFilter (val, colspan) {
+      var startIndex = val.indexOf('-')
+      var year = val.slice(0, startIndex)
+      var monthIndex = val.slice(startIndex + 1).match(/\d+/)[0]
+      if (colspan <= 2) {
+        return month[monthIndex - 1]
+      }
+      // return month[monthIndex - 1]
+      return year + '年' + month[monthIndex - 1]
+    },
     getTableWidth () {
       var self = this
       this.$nextTick(function () {
@@ -722,79 +745,6 @@ export default {
       d.setMinutes(0)
       d.setSeconds(1)
       return d
-    },
-    hasDaysBefore () {
-      var day1 = this.rangeDate.dates[0].match(/\d+-\d+-\d+/)[0]
-      var day2 = this.rangeDate.dates[1].match(/\d+-\d+-\d+/)[0]
-      var day3 = this.rangeDate.dates[2].match(/\d+-\d+-\d+/)[0]
-      var index1 = day1.lastIndexOf('-')
-      var index2 = day2.lastIndexOf('-')
-      var index3 = day3.lastIndexOf('-')
-      var d1 = day1.slice(index1 + 1)
-      var d2 = day2.slice(index2 + 1)
-      var d3 = day3.slice(index3 + 1)
-      var week = this.rangeDate.dates[0].match(/:\d+$/)[0].slice(1)
-      var day = this.rangeDate.dates[0].match(/\d+-\d+-/)[0]
-      if (d1 >= 28 && d1 > d3) {
-        if (d2 > d1) {
-          var t = day + (d1 - 1)
-          if (week === 0) {
-            t += ':6'
-          } else {
-            t += ':' + (+week - 1)
-          }
-          this.daysBefore = 1
-          this.rangeDate.dates.splice(0, 0, t)
-        } else {
-          var t1 = day + (d1 - 1)
-          var t2 = day + (d1 - 2)
-          if (week === 0) {
-            t1 += ':6'
-            t2 += ':5'
-          } else {
-            t1 += ':' + (+week - 1)
-            t2 += ':' + (+week - 2)
-          }
-          this.daysBefore = 2
-          this.rangeDate.dates.splice(0, 0, t2, t1)
-        }
-      }
-    },
-    hasDaysAfter () {
-      var len = this.rangeDate.dates.length
-      var day1 = this.rangeDate.dates[len - 1].match(/\d+-\d+-\d+/)[0]
-      var day2 = this.rangeDate.dates[len - 2].match(/\d+-\d+-\d+/)[0]
-      var day3 = this.rangeDate.dates[len - 3].match(/\d+-\d+-\d+/)[0]
-      var index1 = day1.lastIndexOf('-')
-      var index2 = day2.lastIndexOf('-')
-      var index3 = day3.lastIndexOf('-')
-      var d1 = day1.slice(index1 + 1)
-      var d2 = day2.slice(index2 + 1)
-      var d3 = day3.slice(index3 + 1)
-      var week = this.rangeDate.dates[0].match(/:\d+$/)[0].slice(1)
-      var day = this.rangeDate.dates[0].match(/\d+-\d+-/)[0]
-
-      if (d2 > d1) {
-        var t1 = day + (d1 + 1)
-        var t2 = day + (d1 + 2)
-        if (week === 6) {
-          t1 += ':0'
-          t2 += ':1'
-        } else {
-          t1 += ':' + (+week + 1)
-          t2 += ':' + (+week + 2)
-        }
-        this.rangeDate.dates.push(t1)
-        this.rangeDate.dates.push(t2)
-      } else if (d2 < d1 && d2 > d3) {
-        var t = day + (d1 + 1)
-        if (week === 6) {
-          t += ':0'
-        } else {
-          t += ':' + (+week + 1)
-        }
-        this.rangeDate.dates.push(t)
-      }
     },
     toggleHandle (e, item) {
       var no = item.no
@@ -838,13 +788,50 @@ export default {
     },
     colspan (val) {
       var l = 0
-      for (var i = 0, len = this.rangeDate.dates.length; i < len; i++) {
-        var reg = new RegExp(val)
-        if (reg.test(this.rangeDate.dates[i])) {
-          l++
+      if (this.currentDateType === 'days') {
+        for (var i = 0, len = this.rangeDate.dates.length; i < len; i++) {
+          var reg = new RegExp(val)
+          if (reg.test(this.rangeDate.dates[i])) {
+            l++
+          }
+        }
+      } else if (this.currentDateType === 'months' || this.currentDateType === 'weeks') {
+        var timeStart = this.rangeDate.start.getDate()
+        var timeEnd = this.rangeDate.end.getDate()
+        var months = this.rangeDate.months
+        if (months.indexOf(val) === 0) {
+          l = this.getMonthsColspan(timeStart, 'before')
+        } else if (months.indexOf(val) === months.length - 1) {
+          l = this.getMonthsColspan(timeEnd, 'after')
+        } else {
+          l = 4
         }
       }
       return l
+    },
+    getMonthsColspan (day, type) {
+      type = type || 'before'
+      if (type === 'before') {
+        if (day <= 7) {
+          return 4
+        } else if (day > 7 && day <= 15) {
+          return 3
+        } else if (day > 15 && day <= 21) {
+          return 2
+        } else {
+          return 1
+        }
+      } else {
+        if (day <= 7) {
+          return 1
+        } else if (day > 7 && day <= 15) {
+          return 2
+        } else if (day > 15 && day <= 21) {
+          return 3
+        } else {
+          return 4
+        }
+      }
     },
     getStyle (item) {
       var from = +item.from
@@ -856,9 +843,9 @@ export default {
       if (this.currentDateType === 'days') {
         return this.dayProgress(from, to, min)
       } else if (this.currentDateType === 'weeks') {
-        return this.weekProgress(from, to, min)
+        return this.weekProgress(from, to)
       } else if (this.currentDateType === 'months') {
-        return this.monthProgress(from, to, min)
+        return this.monthProgress(from, to)
       }
       return {width: 0}
     },
@@ -876,10 +863,10 @@ export default {
       }
       return {}
     },
-    weekProgress (from, to, min) {
-      return this.monthProgress(from, to, min)
+    weekProgress (from, to) {
+      return this.monthProgress(from, to)
     },
-    monthProgress (from, to, min) {
+    monthProgress (from, to) {
       var marginLeft = 0
       var width = 0
       var date = new Date(from)
@@ -892,15 +879,28 @@ export default {
       var m1 = date1.getMonth() + 1
       var d1 = date1.getDate()
       var index = this.rangeDate.months.indexOf(time)
-      if (d <= 7) {
-        marginLeft = (index * this.ceilWidth * 4)
-      } else if (d > 7 && d <= 15) {
-        marginLeft = (index * this.ceilWidth * 4) + this.ceilWidth
-      } else if (d > 15 && d <= 21) {
-        marginLeft = (index * this.ceilWidth * 4) + this.ceilWidth * 2
+
+      var minDate = this.startTime.getDate()
+      var minDateIndex = 0
+      if (minDate <= 7) {
+        minDateIndex = 0
+      } else if (minDate > 7 && minDate <= 15) {
+        minDateIndex = 1
+      } else if (minDate > 15 && minDate <= 21) {
+        minDateIndex = 2
       } else {
-        marginLeft = (index * this.ceilWidth * 4) + this.ceilWidth * 3
+        minDateIndex = 3
       }
+      if (d <= 7) {
+        marginLeft = (index * this.ceilWidth * 4) - this.ceilWidth * minDateIndex
+      } else if (d > 7 && d <= 15) {
+        marginLeft = (index * this.ceilWidth * 4) + this.ceilWidth - this.ceilWidth * minDateIndex
+      } else if (d > 15 && d <= 21) {
+        marginLeft = (index * this.ceilWidth * 4) + this.ceilWidth * 2 - this.ceilWidth * minDateIndex
+      } else {
+        marginLeft = (index * this.ceilWidth * 4) + this.ceilWidth * 3 - this.ceilWidth * minDateIndex
+      }
+
       if (y1 === y) {
         if (m1 === m) {
           width += this.getDayWidth(d1) - this.getDayWidth(d) + this.ceilWidth
@@ -943,15 +943,4 @@ export default {
 </script>
 
 <style>
-.col1, .col2 {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.col1 {
-  width: 27px;
-}
-.col2 {
-  width: 54px;
-}
 </style>
