@@ -42,6 +42,7 @@
             <el-date-picker
               v-model="time"
               type="daterange"
+              :picker-options="pickerOptions"
               start-placeholder="开始日期"
               end-placeholder="结束日期">
             </el-date-picker>
@@ -61,7 +62,7 @@
           </div>
         </div>
         <div class="table-responsive">
-          <table>
+          <table class="table" ref="table">
             <template>
               <thead v-if="currentDateType === 'days'">
                 <tr>
@@ -117,7 +118,7 @@
               </tbody>
             </template>
           </table>
-          <div class="progresses" :style="{top: progressesHeight}">
+          <div ref="progresses" class="progresses" :style="{top: progressesHeight}">
             <div class="progress-item" v-for="(val, index) in gantt.data" :key="index" v-show="toggleArr.indexOf(index) === -1">
               <div class="pregress" :key="index1" v-for="(item, index1) in val.values" :class="item.customClass" :style="getStyle(item)" :title="item.desc"></div>
             </div>
@@ -137,6 +138,205 @@ export default {
   data () {
     return {
       currentDateType: 'days',
+      data1: [
+        {
+          no: '1',
+          name: '立项阶段',
+          startDate: '2018-06-23',
+          progress: '50%',
+          level: 0,
+          hasChild: true,
+          status: 1,
+          values: [
+            {
+              from: '1530306400000',
+              to: '1531706400000',
+              desc: '2018-06-30 —— 2018-07-16',
+              label: '',
+              customClass: 'ganttBlue'
+            },
+            {
+              from: '1530206400000',
+              to: '1533106400000',
+              desc: '2018-06-29 —— 2018-08-1',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        }
+      ],
+      data2: [
+        {
+          no: '1',
+          name: '立项阶段',
+          startDate: '2018-06-23',
+          progress: '50%',
+          level: 0,
+          hasChild: true,
+          status: 1,
+          values: [
+            {
+              from: '1530306400000',
+              to: '1531706400000',
+              desc: '2018-06-30 —— 2018-07-16',
+              label: '',
+              customClass: 'ganttBlue'
+            },
+            {
+              from: '1530206400000',
+              to: '1533106400000',
+              desc: '2018-06-29 —— 2018-08-01',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        },
+        {
+          no: '1-1',
+          name: '项目申报书',
+          startDate: '2018-07-06',
+          progress: '50%',
+          level: 1,
+          hasChild: true,
+          status: 0,
+          hasDownload: true,
+          values: [
+            {
+              from: '1530806400000',
+              to: '1564606400000',
+              desc: '2018-07-06 —— 2019-08-01',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        },
+        {
+          no: '1-1-1',
+          name: '项目申报书',
+          startDate: '2018-07-06',
+          progress: '50%',
+          level: 2,
+          hasChild: false,
+          status: 0,
+          values: [
+            {
+              from: '1533806400000',
+              to: '1540906400000',
+              desc: '2018-08-09 —— 2018-10-30',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        },
+        {
+          no: '1-2',
+          name: '项目申报书1',
+          startDate: '2018-07-06',
+          progress: '50%',
+          level: 1,
+          hasChild: false,
+          status: 0,
+          values: [
+            {
+              from: '1530806400000',
+              to: '1560906400000',
+              desc: '2018-07-06 —— 2019-06-19',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        },
+        {
+          no: '2',
+          name: '采购阶段',
+          startDate: '2018-07-01 ',
+          progress: '50%',
+          level: 0,
+          hasChild: true,
+          status: 0,
+          values: [
+            {
+              from: '1530374400000',
+              to: '1530374400000',
+              desc: '2018-07-01 —— 2018-07-01',
+              label: '',
+              customClass: 'ganttBlue'
+            }
+          ]
+        },
+        {
+          no: '2-1',
+          name: '采购阶段',
+          startDate: '2018-07-01 ',
+          progress: '50%',
+          level: 1,
+          hasChild: false,
+          status: 0,
+          values: [
+            {
+              from: '1530374400000',
+              to: '1530374400000',
+              desc: '2018-07-01 —— 2018-07-01',
+              label: '',
+              customClass: 'ganttBlue'
+            }
+          ]
+        },
+        {
+          no: '3',
+          name: '实施阶段',
+          startDate: '2018-07-01 ',
+          progress: '50%',
+          level: 0,
+          hasChild: false,
+          status: 0,
+          values: [
+            {
+              from: '1530374400000',
+              to: '1531584000000',
+              desc: '2018-07-01 —— 2018-07-15',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        },
+        {
+          no: '4',
+          name: '验收与支付',
+          startDate: '2018-07-01 ',
+          progress: '50%',
+          level: 0,
+          hasChild: false,
+          status: 0,
+          values: [
+            {
+              from: '1530374400000',
+              to: '1532448000000',
+              desc: '2018-07-01 —— 2018-07-25',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        },
+        {
+          no: '5',
+          name: '项目绩效',
+          startDate: '2018-07-01 ',
+          progress: '50%',
+          level: 0,
+          hasChild: false,
+          status: 0,
+          values: [
+            {
+              from: '1531152000000',
+              to: '1532016000000',
+              desc: '2018-07-10 —— 2018-07-20',
+              label: '',
+              customClass: 'ganttOrange'
+            }
+          ]
+        }
+      ],
       types: [
         {
           id: 1,
@@ -280,7 +480,7 @@ export default {
               {
                 from: '1530374400000',
                 to: '1530374400000',
-                desc: '2018-07-01 —— 2018-07-1',
+                desc: '2018-07-01 —— 2018-07-01',
                 label: '',
                 customClass: 'ganttBlue'
               }
@@ -296,9 +496,9 @@ export default {
             status: 0,
             values: [
               {
-                from: '1530374400000',
+                from: '',
                 to: '',
-                desc: '2018-07-01 —— 2018-07-10',
+                desc: '2018-07-01 —— 2018-07-01',
                 label: '',
                 customClass: 'ganttBlue'
               }
@@ -368,10 +568,20 @@ export default {
       daysAfter: 0,
       toggleDowm: '▼',
       toggleLeft: '◀',
-      toggleArr: []
+      toggleArr: [],
+      startTime: Date.now(),
+      endTime: Date.now()
     }
   },
   computed: {
+    pickerOptions () {
+      var self = this
+      return {
+        disabledDate (time) {
+          return time.getTime() < new Date(self.startTime).getTime() - DAY
+        }
+      }
+    },
     emptyHeight () {
       if (this.currentDateType === 'days') {
         return '100px'
@@ -413,41 +623,7 @@ export default {
   },
   watch: {
     time (newVal) {
-      if (!newVal) {
-        return
-      }
-      if (newVal.length === 0) {
-        return
-      }
-      var data = [
-        {
-          no: '1',
-          name: '立项阶段',
-          startDate: '2018-06-23',
-          progress: '50%',
-          level: 0,
-          hasChild: true,
-          status: 1,
-          values: [
-            {
-              from: '1530306400000',
-              to: '1531706400000',
-              desc: '2018-06-30 —— 2018-07-16',
-              label: '',
-              customClass: 'ganttBlue'
-            },
-            {
-              from: '1530206400000',
-              to: '1533106400000',
-              desc: '2018-06-29 —— 2018-08-1',
-              label: '',
-              customClass: 'ganttOrange'
-            }
-          ]
-        }
-      ]
-      this.gantt.data = data
-      // this.$set(this.gantt, 'data', data)
+      this.$set(this.gantt, 'data', JSON.parse(JSON.stringify(this.data2)))
     },
     'gantt.data': {
       handler (newVal) {
@@ -467,9 +643,11 @@ export default {
               }
             }
             if (!min) {
-              min = from
+              if (from > 0) {
+                min = from
+              }
             } else {
-              if (min > from) {
+              if (min > from && from > 0) {
                 min = from
               }
             }
@@ -477,34 +655,54 @@ export default {
         }
         min = +min
         max = +max
-
+        this.startTime = this.initTime(min)
+        this.endTime = this.initTime(max)
         this.rangeDate.start = this.initTime(min)
         this.rangeDate.end = this.initTime(max)
-        this.rangeDate.dates.length = 0
-        this.rangeDate.months.length = 0
-        do {
-          var d = new Date(+min)
-          var m = d.getFullYear() + '-' + (d.getMonth() + 1)
-          if (this.rangeDate.months.length > 0) {
-            if (this.rangeDate.months.indexOf(m) === -1) {
+        if ((this.time && this.time.length > 0) || (min > 0 && max > 0)) {
+          if (this.time && this.time.length > 0) {
+            min = new Date(this.time[0]).getTime()
+            max = new Date(this.time[1]).getTime()
+            this.rangeDate.start = this.initTime(min)
+            this.rangeDate.end = this.initTime(max)
+          } else if (min > 0 && max > 0) {
+            this.rangeDate.start = this.startTime
+            this.rangeDate.end = this.endTime
+          }
+
+          this.rangeDate.dates.length = 0
+          this.rangeDate.months.length = 0
+          do {
+            var d = new Date(+min)
+            var m = d.getFullYear() + '-' + (d.getMonth() + 1)
+            if (this.rangeDate.months.length > 0) {
+              if (this.rangeDate.months.indexOf(m) === -1) {
+                this.rangeDate.months.push(m)
+              }
+            } else {
               this.rangeDate.months.push(m)
             }
-          } else {
-            this.rangeDate.months.push(m)
-          }
-          this.rangeDate.dates.push(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ':' + d.getDay())
-          min += DAY
-        } while (min <= max)
-        // this.hasDaysBefore()
-        // this.hasDaysAfter()
-        // console.log(this.rangeDate)
-        // console.log(this.gantt.data)
-        this.initFullYear()
+            this.rangeDate.dates.push(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ':' + d.getDay())
+            min += DAY
+          } while (min <= max)
+          this.initFullYear()
+          var self = this
+          setTimeout(function () {
+            self.getTableWidth()
+          }, 6)
+        }
       },
       immediate: true
     }
   },
   methods: {
+    getTableWidth () {
+      var self = this
+      this.$nextTick(function () {
+        self.$refs.progresses.style.width = self.$refs.table.offsetWidth + 'px'
+        self.$refs.progresses.style.overflow = 'hidden'
+      })
+    },
     initFullYear () {
       setTimeout(function () {
         var fullYear = document.querySelectorAll('.fullYear')
@@ -651,7 +849,7 @@ export default {
     getStyle (item) {
       var from = +item.from
       var to = +item.to
-      if (to === 0 || from === 0) {
+      if (!to || !from || to === 0 || from === 0 || to <= 0 || from <= 0) {
         return {width: 0}
       }
       var min = this.rangeDate.start
@@ -665,15 +863,18 @@ export default {
       return {width: 0}
     },
     dayProgress (from, to, min) {
-      var marginLeft = Math.floor((from - min) / DAY) * this.ceilWidth
-      var result = 0
-      if (to - from > 0) {
-        result = to - from
-      } else if (to - from === 0) {
-        result = 1
+      if (min > 0) {
+        var marginLeft = Math.floor((from - min) / DAY) * this.ceilWidth
+        var result = 0
+        if (to - from > 0) {
+          result = to - from
+        } else if (to - from === 0) {
+          result = 1
+        }
+        var width = Math.ceil(result / DAY) * this.ceilWidth
+        return {width: width + 'px', marginLeft: marginLeft + 'px'}
       }
-      var width = Math.ceil(result / DAY) * this.ceilWidth
-      return {width: width + 'px', marginLeft: marginLeft + 'px'}
+      return {}
     },
     weekProgress (from, to, min) {
       return this.monthProgress(from, to, min)
@@ -732,6 +933,10 @@ export default {
     dateHandle (item) {
       this.currentDateType = item.engName
       this.initFullYear()
+      var self = this
+      setTimeout(function () {
+        self.getTableWidth()
+      }, 5)
     }
   }
 }
