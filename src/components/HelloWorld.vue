@@ -100,7 +100,7 @@
               <thead v-else-if="currentDateType === 'months'">
                 <tr>
                   <th v-for="(item, index) in rangeDate.months" :key="index" :colspan="colspan(item)">
-                    <div :class="{'row-month': colspan(item) > 2}">{{monthFilter(item, colspan(item))}}</div>
+                    <div :class="{'row-month': colspan(item) > 3}">{{monthFilter(item, colspan(item))}}</div>
                   </th>
                 </tr>
               </thead>
@@ -799,10 +799,11 @@ export default {
         var timeStart = this.rangeDate.start.getDate()
         var timeEnd = this.rangeDate.end.getDate()
         var months = this.rangeDate.months
-        if (months.indexOf(val) === 0) {
+        if (months.indexOf(val) === 0 && months.length > 1) {
           l = this.getMonthsColspan(timeStart, 'before')
         } else if (months.indexOf(val) === months.length - 1) {
           l = this.getMonthsColspan(timeEnd, 'after')
+          console.log(2, l)
         } else {
           l = 4
         }
