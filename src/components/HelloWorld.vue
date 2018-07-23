@@ -20,12 +20,14 @@
               <tr v-for="(item, index) in gantt.data" :key="index" v-show="toggleArr.indexOf(index) === -1">
                 <td>
                   <i class="state" :class="statusColor[item.status]"></i>
-                  <i v-if="item.hasDownload" class="has-download">DS</i>
+                  <i v-if="item.hasDownload" class="has-download" @click="downloadHandle(item)">DS</i>
                 </td>
                 <td :title="item.no + '.' + item.name" class="name">
                   <i v-for="n in item.level" :key="n" class="black"></i>
                   <span>
-                    <i v-if="item.hasChild" class="toggle" @click="toggleHandle($event, item)">▼</i>
+                    <i v-if="item.hasChild" class="toggle" @click="toggleHandle($event, item)">
+                      {{!expand ? toggleRight : toggleDown}}
+                    </i>
                     {{item.no + '.' + item.name}}
                   </span>
                 </td>
@@ -126,6 +128,7 @@
         </div>
       </div>
     </div>
+    <button type="button" @click="reset">btn</button>
   </div>
 </template>
 
@@ -137,35 +140,9 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
+      expand: false,
       monthsColspanAllCount: 0,
       currentDateType: 'months',
-      data1: [
-        {
-          no: '1',
-          name: '立项阶段',
-          startDate: '2018-06-23',
-          progress: '50%',
-          level: 0,
-          hasChild: true,
-          status: 1,
-          values: [
-            {
-              from: '1530306400000',
-              to: '1531706400000',
-              desc: '2018-06-30 —— 2018-07-16',
-              label: '',
-              customClass: 'ganttBlue'
-            },
-            {
-              from: '1530206400000',
-              to: '1533106400000',
-              desc: '2018-06-29 —— 2018-08-1',
-              label: '',
-              customClass: 'ganttOrange'
-            }
-          ]
-        }
-      ],
       data2: [
         {
           no: '1',
@@ -568,11 +545,12 @@ export default {
       },
       daysBefore: 0,
       daysAfter: 0,
-      toggleDowm: '▼',
-      toggleLeft: '◀',
+      toggleDown: '▼',
+      toggleRight: '▶',
       toggleArr: [],
       startTime: Date.now(),
-      endTime: Date.now()
+      endTime: Date.now(),
+      one: 1
     }
   },
   computed: {
@@ -622,6 +600,11 @@ export default {
     },
     'gantt.data': {
       handler (newVal) {
+        if (newVal && newVal.length === 0) {
+          this.one = 1
+          this.rangeDate = {}
+          return
+        }
         var max, min
         for (var i = 0, len = newVal.length; i < len; i++) {
           var val = newVal[i].values
@@ -695,18 +678,27 @@ export default {
             self.getTableWidth()
           }, 5)
           this.monthsColspanAllCount = this.getMonthsColspanAll()
-          console.log(this.rangeDate)
+          if (!this.expand && this.one++ === 1) {
+            this.gantt.data.forEach(function (item, index) {
+              if (item.no.indexOf('-') > -1) {
+                self.toggleArr.push(index)
+              }
+            })
+            document.querySelectorAll('.toggle').innerText = this.toggleRight
+          }
         }
       },
       immediate: true
     }
   },
   methods: {
+    reset () {
+      this.$set(this.gantt, 'data', JSON.parse(JSON.stringify([])))
+    },
     getMonthsColspanAll () {
       var start = this.rangeDate.start
       var end = this.rangeDate.end
       var len = this.rangeDate.months.length * 4 - this.getMonthsColspan(start.getDate(), 'after') - this.getMonthsColspan(end.getDate(), 'before') + 2
-      console.log('len', len)
       return len
     },
     monthFilter (val, colspan) {
@@ -756,15 +748,15 @@ export default {
         }
       }
 
-      if (e.target.innerText === this.toggleDowm) {
-        e.target.innerText = this.toggleLeft
+      if (e.target.innerText === this.toggleDown) {
+        e.target.innerText = this.toggleRight
         for (var k = 0, len2 = arr.length; k < len2; k++) {
           if (this.toggleArr.indexOf(arr[k]) === -1) {
             this.toggleArr.push(arr[k])
           }
         }
       } else {
-        e.target.innerText = this.toggleDowm
+        e.target.innerText = this.toggleDown
         var reg = new RegExp('^' + no + '-\\d$')
         for (var j = 0, len1 = arr.length; j < len1; j++) {
           if (reg.test(data[arr[j]].no)) {
@@ -782,7 +774,7 @@ export default {
         var self = this
         toggleIcon.forEach(function (item) {
           var tr = document.querySelectorAll('.content tbody tr')[item]
-          tr.querySelector('.toggle').innerText = self.toggleLeft
+          tr.querySelector('.toggle').innerText = self.toggleRight
         })
       }
     },
@@ -803,7 +795,6 @@ export default {
           l = this.getMonthsColspan(timeStart, 'before')
         } else if (months.indexOf(val) === months.length - 1) {
           l = this.getMonthsColspan(timeEnd, 'after')
-          console.log(2, l)
         } else {
           l = 4
         }
@@ -882,6 +873,7 @@ export default {
       var index = this.rangeDate.months.indexOf(time)
 
       var minDate = this.startTime.getDate()
+      console.log('minDate', minDate)
       var minDateIndex = 0
       if (minDate <= 7) {
         minDateIndex = 0
@@ -938,6 +930,9 @@ export default {
       setTimeout(function () {
         self.getTableWidth()
       }, 5)
+    },
+    downloadHandle (item) {
+      this.$emit('see', item.slice(0, 1))
     }
   }
 }

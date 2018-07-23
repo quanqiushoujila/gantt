@@ -29,7 +29,7 @@ var gantt = {
     '              <td :title="item.no + \'.\' + item.name" class="name">',
     '                <i v-for="n in item.level" :key="n" class="black"></i>',
     '                <span>',
-    '                  <i v-if="item.hasChild" class="toggle" @click="toggleHandle($event, item)">▼</i>',
+    '                  <i v-if="item.hasChild" class="toggle" @click="toggleHandle($event, item)">{{!expand ? toggleRight : toggleDown}}</i>',
     '                  {{item.no + \'.\' + item.name}}',
     '                </span>',
     '              </td>',
@@ -133,6 +133,10 @@ var gantt = {
     '</div>'
   ].join(''),
   props: {
+    expand: {
+      type: Boolean,
+      default: true
+    },
     gantt: {
       type: Object,
       dafault(){
@@ -203,8 +207,8 @@ var gantt = {
       },
       daysBefore: 0,
       daysAfter: 0,
-      toggleDowm: '▼',
-      toggleLeft: '◀',
+      toggleDown: '▼',
+      toggleRight: '▶',
       toggleArr: [],
       startTime: Date.now(),
       endTime: Date.now()
@@ -331,7 +335,14 @@ var gantt = {
             self.getTableWidth()
           }, 5)
           this.monthsColspanAllCount = this.getMonthsColspanAll()
-          console.log(this.rangeDate)
+          if (!this.expand) {
+            this.gantt.data.forEach(function (item, index) {
+              if (item.no.indexOf('-') > -1) {
+                self.toggleArr.push(index)
+              }
+            })
+            document.querySelectorAll('.toggle').innerText = this.toggleRight
+          }
         }
       },
       immediate: true
@@ -342,7 +353,6 @@ var gantt = {
       var start = this.rangeDate.start
       var end = this.rangeDate.end
       var len = this.rangeDate.months.length * 4 - this.getMonthsColspan(start.getDate(), 'after') - this.getMonthsColspan(end.getDate(), 'before') + 2
-      console.log('len', len)
       return len
     },
     monthFilter (val, colspan) {
@@ -392,15 +402,15 @@ var gantt = {
         }
       }
 
-      if (e.target.innerText === this.toggleDowm) {
-        e.target.innerText = this.toggleLeft
+      if (e.target.innerText === this.toggleDown) {
+        e.target.innerText = this.toggleRight
         for (var k = 0, len2 = arr.length; k < len2; k++) {
           if (this.toggleArr.indexOf(arr[k]) === -1) {
             this.toggleArr.push(arr[k])
           }
         }
       } else {
-        e.target.innerText = this.toggleDowm
+        e.target.innerText = this.toggleDown
         var reg = new RegExp('^' + no + '-\\d$')
         for (var j = 0, len1 = arr.length; j < len1; j++) {
           if (reg.test(data[arr[j]].no)) {
@@ -418,7 +428,7 @@ var gantt = {
         var self = this
         toggleIcon.forEach(function (item) {
           var tr = document.querySelectorAll('.content tbody tr')[item]
-          tr.querySelector('.toggle').innerText = self.toggleLeft
+          tr.querySelector('.toggle').innerText = self.toggleRight
         })
       }
     },
@@ -435,7 +445,7 @@ var gantt = {
         var timeStart = this.rangeDate.start.getDate()
         var timeEnd = this.rangeDate.end.getDate()
         var months = this.rangeDate.months
-        if (months.indexOf(val) === 0) {
+        if (months.indexOf(val) === 0 && months.length > 1) {
           l = this.getMonthsColspan(timeStart, 'before')
         } else if (months.indexOf(val) === months.length - 1) {
           l = this.getMonthsColspan(timeEnd, 'after')

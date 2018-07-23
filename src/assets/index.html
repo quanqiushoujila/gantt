@@ -8,7 +8,7 @@
 </head>
 <body>
   <div id="app">
-    <gantt :gantt="ganttData"/>
+    <gantt :gantt="ganttData" :expand="expand"/>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
   <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -209,6 +209,7 @@
     new Vue({
       el: '#app',
       data: {
+        expand: false,
         ganttData: {
           titles: [
             {
